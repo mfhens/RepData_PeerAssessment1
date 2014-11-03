@@ -1,0 +1,50 @@
+---
+title: 'Reproducible Research: Peer Assessment 1'
+author: "Markus Friede Hens"
+date: "Monday, November 03, 2014"
+output: html_document
+---
+
+##Assumptions
+The script assumes that the activity data is present in the current working directory under the name ```activity.csv```. 
+The file must contain the folowing features:
+
+Feature|Type|Description
+-------|----|-----------
+steps|int|No. of steps taken
+date|Date (YYYY-MM-DD)|Date of day
+interval|int|Interval in day given by date, from 0 to 2355 in 5 minute steps
+
+###Loading and Preprocessing the data
+```{r}
+activitydata <- read.csv("activity.csv", stringsAsFactors = FALSE)
+activitydata$date <- as.Date(activitydata$date)
+activitydata$timeOfDay <- paste(activitydata$interval %/% 60, ":", activitydata$interval %% 60)
+```
+
+###What is the mean total number of steps taken per day?
+
+Aggregate the number of steps per day, based on this mean and median can be easily calculated. `NA`s are ignored.
+
+```{r}
+sumPerDate <- aggregate(activitydata$steps, list(Date = activitydata$date), FUN=sum, na.rm=TRUE)
+meanNoOfStepsPerDay <- mean(sumPerDate$x, na.rm=TRUE)
+medianNoOfStepsPerDay <- median(sumPerDate$x, na.rm=TRUE)
+```
+
+```{r echo=FALSE}
+plot(sumPerDate$Date, sumPerDate$x, type="h", main ="No. of steps per date", xlab="Date", ylab="No of. steps")
+```
+
+The sample mean is `r format(round(meanNoOfStepsPerDay, 2), nsmall=2)` while the sample median is `r medianNoOfStepsPerDay`.
+
+### What is the average daily activity pattern?
+Calculate the mean per interval. `NA`s are ignored.
+
+```{r}
+meanPerInterval = aggregate(activitydata$steps, list(Interval = activitydata$interval), mean, na.rm=TRUE)
+```
+
+```{r echo=FALSE}
+plot(meanPerInterval$Interval, meanPerInterval$x, type="l", main ="Avg. of steps per 5-minute interval", xlab="Interval", ylab="Avg. no of. steps")
+```
