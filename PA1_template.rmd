@@ -13,13 +13,12 @@ Feature|Type|Description
 -------|----|-----------
 steps|int|No. of steps taken
 date|Date (YYYY-MM-DD)|Date of day
-interval|int|Interval in day given by date, from 0 to 2355 in 5 minute steps
+interval|int|Interval in day given by date, from 0:00 to 23:55 in 5 minute steps
 
 ###Loading and Preprocessing the data
 ```{r}
 activitydata <- read.csv("activity.csv", stringsAsFactors = FALSE)
 activitydata$date <- as.Date(activitydata$date)
-activitydata$timeOfDay <- paste(activitydata$interval %/% 60, ":", activitydata$interval %% 60)
 ```
 
 ###What is the mean total number of steps taken per day?
@@ -33,7 +32,7 @@ medianNoOfStepsPerDay <- median(sumPerDate$x, na.rm=TRUE)
 ```
 
 ```{r echo=FALSE}
-plot(sumPerDate$Date, sumPerDate$x, type="h", main ="No. of steps per date", xlab="Date", ylab="No of. steps")
+hist(sumPerDate$x, xlab="Steps per day", main = "Histogram of steps per day")
 ```
 
 The sample mean is `r format(round(meanNoOfStepsPerDay, 2), nsmall=2)` while the sample median is `r medianNoOfStepsPerDay`.
@@ -69,7 +68,7 @@ medianNoOfStepsPerDayNoNA <- median(sumPerDateNoNA$x)
 ```
 
 ```{r echo=FALSE}
-plot(sumPerDateNoNA$Date, sumPerDateNoNA$x, type="h", main ="No. of steps per date", xlab="Date", ylab="No of. steps")
+hist(sumPerDateNoNA$x, xlab="Steps per day", main = "Histogram of steps per day (imputed)")
 ```
 
 The sample mean of the cleaned data set is `r format(round(meanNoOfStepsPerDayNoNA, 2), nsmall=2)` while the sample median is `r format(medianNoOfStepsPerDayNoNA)`. The mean increased by `r format(round(meanNoOfStepsPerDayNoNA-meanNoOfStepsPerDay, 2), nsmall=2)`, while the median increased by `r format(medianNoOfStepsPerDayNoNA-medianNoOfStepsPerDay)`.
@@ -91,3 +90,5 @@ par(mfrow=c(1,2))
 plot(meanPerIntervalNoNA[meanPerIntervalNoNA$weekday=="weekday",]$interval, meanPerIntervalNoNA[meanPerIntervalNoNA$weekday=="weekday",]$x, type="l", main ="Avg. of steps\nper 5-minute interval\nWeekday", xlab="Interval", ylab="Avg. no of. steps")
 plot(meanPerIntervalNoNA[meanPerIntervalNoNA$weekday=="weekend",]$interval, meanPerIntervalNoNA[meanPerIntervalNoNA$weekday=="weekend",]$x, type="l", main ="Avg. of steps\nper 5-minute interval\nWeekend", xlab="Interval", ylab="Avg. no of. steps")
 ```
+
+The plots show a clear difference in activity patterns between weekdays and weekends. On weekdays, there is a spike at around interval 7:50, lesser spikes around lunch time, and again in the afternoon and evening, with limited activity in between. In the weekend, activity levels are generally higher, and more spread out over the day. A possible explanation could be  person with an office job, that goes to work, goes out for lunch, home again, to do something with his famlity. On the weekends, the jobroutine is replaced by freetime activities, obviously involving more movement, maybe a runner.
